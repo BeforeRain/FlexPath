@@ -1,5 +1,5 @@
 obj-m += flexpath.o
-flexpath-y := main.o
+flexpath-y := netfilter.o main.o
 
 all:
 	make -C /lib/modules/$(shell uname -r)/build M=$(PWD) modules
