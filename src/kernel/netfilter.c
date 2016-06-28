@@ -6,10 +6,18 @@
 
 
 /* Netfilter hook function for outgoing packets */
-static unsigned int fp_handle_outgoing_pkt(const struct nf_hook_ops *ops, struct sk_buff *skb, const struct net_device *in_dev, const struct net_device *out_dev, int (* okfn)(struct sk_buff *));
+static unsigned int fp_handle_outgoing_pkt(const struct nf_hook_ops *ops,
+                                           struct sk_buff *skb,
+                                           const struct net_device *in_dev,
+                                           const struct net_device *out_dev,
+                                           int (* okfn)(struct sk_buff *));
 
 /* Netfilter hook function for incoming packets */
-static unsigned int fp_handle_incoming_pkt(const struct nf_hook_ops *ops, struct sk_buff *skb, const struct net_device *in_dev, const struct net_device *out_dev, int (* okfn)(struct sk_buff *));
+static unsigned int fp_handle_incoming_pkt(const struct nf_hook_ops *ops,
+                                           struct sk_buff *skb,
+                                           const struct net_device *in_dev,
+                                           const struct net_device *out_dev,
+                                           int (* okfn)(struct sk_buff *));
 
 /* Netfilter hook for outgoing packets */
 static struct nf_hook_ops fp_nf_out_hook = {
@@ -29,14 +37,22 @@ static struct nf_hook_ops fp_nf_in_hook = {
 
 
 /* Netfilter hook function for outgoing packets */
-static unsigned int fp_handle_outgoing_pkt(const struct nf_hook_ops *ops, struct sk_buff *skb, const struct net_device *in_dev, const struct net_device *out_dev, int (* okfn)(struct sk_buff *))
+static unsigned int fp_handle_outgoing_pkt(const struct nf_hook_ops *ops,
+                                           struct sk_buff *skb,
+                                           const struct net_device *in_dev,
+                                           const struct net_device *out_dev,
+                                           int (* okfn)(struct sk_buff *))
 {
         printk(KERN_INFO "fp_handle_outgoing_pkt");
         return NF_ACCEPT;
 }
 
 /* Netfilter hook function for incoming packets */
-static unsigned int fp_handle_incoming_pkt(const struct nf_hook_ops *ops, struct sk_buff *skb, const struct net_device *in_dev, const struct net_device *out_dev, int (* okfn)(struct sk_buff *))
+static unsigned int fp_handle_incoming_pkt(const struct nf_hook_ops *ops,
+                                           struct sk_buff *skb,
+                                           const struct net_device *in_dev,
+                                           const struct net_device *out_dev,
+                                           int (* okfn)(struct sk_buff *))
 {
         printk(KERN_INFO "fp_handle_incoming_pkt");
         return NF_ACCEPT;
