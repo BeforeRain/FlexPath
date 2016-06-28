@@ -1,8 +1,9 @@
+#include <linux/ip.h>
 #include <linux/netfilter.h>
 #include <linux/netfilter_ipv4.h>
 #include <linux/netdevice.h>
 #include <linux/skbuff.h>
-#include "netfilter.h" // packet_interceptor?
+#include "netfilter.h"
 #include "path_selector.h"
 #include "packet_modifier.h"
 
@@ -19,17 +20,6 @@ static unsigned int fp_handle_incoming_pkt(const struct nf_hook_ops *ops,
                                            const struct net_device *in_dev,
                                            const struct net_device *out_dev,
                                            int (* okfn)(struct sk_buff *));
-/*
- * Determine if an outgoing packet is a desired packet for FlexPath to select
- * a path and encapsulate the path ID with IP-in-IP.
- */
-static bool fp_desired_for_encapsulation(struct sk_buff *skb);
-
-/*
- * Determine if an incoming packet is a desired packet for FlexPath to
- * decapsulate the outer IP header.
- */
-static bool fp_desired_for_decapsulation(struct sk_buff *skb);
 
 /* Netfilter hook for outgoing packets */
 static struct nf_hook_ops fp_nf_out_hook = {
@@ -47,33 +37,15 @@ static struct nf_hook_ops fp_nf_in_hook = {
         .priority       = NF_IP_PRI_FIRST,
 };
 
-/*
- * Determine if an outgoing packet is a desired packet for FlexPath to select
- * a path and encapsulate the path ID with IP-in-IP.
- */
-static bool fp_desired_for_encapsulation(struct sk_buff *skb)
-{
-        return true;
-}
 
-/*
- * Determine if an incoming packet is a desired packet for FlexPath to
- * decapsulate the outer IP header.
- */
-static bool fp_desired_for_decapsulation(struct sk_buff *skb)
-{
-        return true;
-}
-
-/* Netfilter hook function for outgoing packets */
 static unsigned int fp_handle_outgoing_pkt(const struct nf_hook_ops *ops,
                                            struct sk_buff *skb,
                                            const struct net_device *in_dev,
                                            const struct net_device *out_dev,
                                            int (* okfn)(struct sk_buff *))
-{
+{        
         int path_id;
-        printk(KERN_INFO "fp_handle_outgoing_pkt");
+        printk(KERN_INFO "fp_handle_outgoing_pkt\n");
         if (!fp_desired_for_encapsulation(skb)) {
                 return NF_ACCEPT;
         }
@@ -81,21 +53,20 @@ static unsigned int fp_handle_outgoing_pkt(const struct nf_hook_ops *ops,
         return fp_ipip_encapsulate(skb, out_dev, path_id) ? NF_ACCEPT : NF_DROP;
 }
 
-/* Netfilter hook function for incoming packets */
 static unsigned int fp_handle_incoming_pkt(const struct nf_hook_ops *ops,
                                            struct sk_buff *skb,
                                            const struct net_device *in_dev,
                                            const struct net_device *out_dev,
                                            int (* okfn)(struct sk_buff *))
 {
-        printk(KERN_INFO "fp_handle_incoming_pkt");
+        printk(KERN_INFO "fp_handle_incoming_pkt\n");
         if (!fp_desired_for_decapsulation(skb)) {
+                printk(KERN_INFO "        not desired for decapsulation\n");
                 return NF_ACCEPT;
         }
         return fp_ipip_decapsulate(skb) ? NF_ACCEPT : NF_DROP;
 }
 
-/* Register Netfilter hooks */
 bool fp_netfilter_init(void)
 {
         if (unlikely(nf_register_hook(&fp_nf_out_hook))) {
@@ -109,9 +80,9 @@ bool fp_netfilter_init(void)
         return true;
 }
 
-/* Unregister Netfilter hooks */
 void fp_netfilter_exit(void)
 {
         nf_unregister_hook(&fp_nf_out_hook);
         nf_unregister_hook(&fp_nf_in_hook);
 }
+

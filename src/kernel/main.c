@@ -1,9 +1,24 @@
 #include <linux/module.h>
 #include "netfilter.h"
 
+/* param_dev: NIC to operate XPath */
+char *param_dev = NULL;
+MODULE_PARM_DESC(param_dev, "Interface to operate XPath (NULL=all)");
+module_param(param_dev, charp, 0);
+
 
 static int flexpath_module_init(void)
 {
+        int i;
+        if (param_dev) {
+                for (i = 0; i < 32 && param_dev[i] != '\0'; i++) {
+                        if (param_dev[i] == '\n') {
+                                param_dev[i] = '\0';
+                                break;
+                        }
+                }
+        }
+
         printk(KERN_INFO "FlexPath init");
         fp_netfilter_init();
         return 0;
