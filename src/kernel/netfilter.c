@@ -45,7 +45,7 @@ static unsigned int fp_handle_outgoing_pkt(const struct nf_hook_ops *ops,
                                            int (* okfn)(struct sk_buff *))
 {        
         int path_id;
-        printk(KERN_INFO "fp_handle_outgoing_pkt\n");
+        printk(KERN_INFO "[FlexPath] fp_handle_outgoing_pkt\n");
         if (!fp_desired_for_encapsulation(skb)) {
                 return NF_ACCEPT;
         }
@@ -59,9 +59,8 @@ static unsigned int fp_handle_incoming_pkt(const struct nf_hook_ops *ops,
                                            const struct net_device *out_dev,
                                            int (* okfn)(struct sk_buff *))
 {
-        printk(KERN_INFO "fp_handle_incoming_pkt\n");
+        printk(KERN_INFO "[FlexPath] fp_handle_incoming_pkt\n");
         if (!fp_desired_for_decapsulation(skb)) {
-                printk(KERN_INFO "        not desired for decapsulation\n");
                 return NF_ACCEPT;
         }
         return fp_ipip_decapsulate(skb) ? NF_ACCEPT : NF_DROP;
@@ -70,11 +69,11 @@ static unsigned int fp_handle_incoming_pkt(const struct nf_hook_ops *ops,
 bool fp_netfilter_init(void)
 {
         if (unlikely(nf_register_hook(&fp_nf_out_hook))) {
-                printk(KERN_INFO "FlexPath: failed to register Netfilter hook for outgoing packets at NF_INET_POST_ROUTING\n");
+                printk(KERN_INFO "[FlexPath] Failed to register Netfilter hook for outgoing packets at NF_INET_POST_ROUTING\n");
                 return false;
         }
         if (unlikely(nf_register_hook(&fp_nf_in_hook))) {
-                printk(KERN_INFO "FlexPath: failed to register Netfilter hook for incoming packets at NF_INET_PRE_ROUTING\n");
+                printk(KERN_INFO "[FlexPath] failed to register Netfilter hook for incoming packets at NF_INET_PRE_ROUTING\n");
                 return false;
         }
         return true;

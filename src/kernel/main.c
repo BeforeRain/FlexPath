@@ -19,7 +19,7 @@ static int flexpath_module_init(void)
                 }
         }
 
-        printk(KERN_INFO "FlexPath init");
+        printk(KERN_INFO "[FlexPath] FlexPath module init");
         fp_netfilter_init();
         return 0;
 }
@@ -27,7 +27,7 @@ static int flexpath_module_init(void)
 static void flexpath_module_exit(void)
 {
         fp_netfilter_exit();
-        printk(KERN_INFO "FlexPath exit");
+        printk(KERN_INFO "[FlexPath] FlexPath module exit");
 }
 
 module_init(flexpath_module_init);
